@@ -20,7 +20,7 @@ class Ristretto
     Ristretto.extensions[path.extname fileName] fileName
   
   resolve      : (req, dir) ->
-    failure = -> (throw new Error "Unknown module `#{req}`")
+    failure = -> (throw new Error('foo'))
     
     reqPath = switch req.charAt 0
       when '/' then req
@@ -44,7 +44,9 @@ class Ristretto
       parents  : []
       rank     : 0
     
-    module.body = @load(fileName).replace /require\(('|")(.*?)\1\)/g, (_, _, req) =>
+    module.body = @load(fileName).replace /require\(('|")(.*?)\1\)/g, (_, _, req, pos, contents) =>
+      depName = try @resolve(req, path.dirname(fileName)) catch e then throw new Ristretto.Error req, fileName
+      
       dep = @add(@resolve(req, path.dirname(fileName)), req)
       dep.children.push module
       module.parents.push dep
@@ -70,9 +72,17 @@ class Ristretto
       """ for module in (module for fileName, module of @modules).sort((a,b) -> a.rank - b.rank)).join('\n')
     ].join('\n')
     
-
+class Ristretto.Error extends Error
+  constructor: (@req, @fileName) ->
+    @message = "Unknown module `#{@req}` required in file `#{@fileName}`"
+  
 exports.bundle = (options) -> 
-  output = (new Ristretto options).bundle()
+  try
+    output = (new Ristretto options).bundle()
+  catch e
+    console.log e.message
+    process.exit 1
+    
   if options.minify?
     {uglify, parser} = require 'uglify'
     ast = parser.parse output
@@ -87,7 +97,5 @@ exports.bundle = (options) ->
     */
     #{output}
     """
-  if options.target?
-    fs.writeFileSync options.target, output
-  else
-    return output
+  if options.target? then fs.writeFileSync options.target, output
+  else return output
