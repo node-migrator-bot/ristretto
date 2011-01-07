@@ -1,0 +1,9 @@
+fs        = require 'fs'
+ristretto = require '../src/ristretto'
+
+task 'build', 'compile sample app', (options) ->
+  fs.writeFileSync 'output.js', ristretto.bundle
+    main      : 'src/app.coffee'
+    raw       : ['raw/globals.js']
+    libraries :
+      util : 'libraries/util.js'
