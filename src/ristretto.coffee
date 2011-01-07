@@ -71,4 +71,23 @@ class Ristretto
     ].join('\n')
     
 
-exports.bundle = (options) -> (new Ristretto options).bundle()
+exports.bundle = (options) -> 
+  output = (new Ristretto options).bundle()
+  if options.minify?
+    {uglify, parser} = require 'uglify'
+    ast = parser.parse output
+    ast = uglify.ast_mangle ast
+    ast = uglify.ast_squeeze ast
+    output = uglify.gen_code ast
+  
+  if options.copyright?
+    output = """
+    /*
+    #{options.copyright}
+    */
+    #{output}
+    """
+  if options.target?
+    fs.writeFileSync options.target, output
+  else
+    return output
