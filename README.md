@@ -6,27 +6,29 @@ A simple dependency management and javascript concatenation library.
 Install
 -------
 
-    npm install ristretto
+  npm install ristretto
 
 Usage
 -----
 
-Ristretto exports only one method, namely `bundle`. Its options are passed as an
-object with the following keys.
+Ristretto `exports` only one method, namely `bundle`. Its options are passed as
+an object with the following keys.
 
 All keys but `main` are optional
 
  * `main`       : the main file to compile, all dependencies will be resolved and
- bundled in the right order after being wrapped in a fake CommonJS environment.
+                  bundled in the right order after being wrapped in a fake
+                  CommonJS environment.
  * `target`     : javascript output file, if undefined, the function call returns
- the output.
+                  the output.
  * `raw`        : additionnal files to include without any wrapping/processing.
- This can be useful to include libraries such as web frameworks which are not 
- CommonJS compatible. Those files are added in order.
+                  This can be useful to include libraries such as web frameworks
+                  which are not CommonJS compatible. Those files are added in
+                  order.
  * `minify`     : if set to `true`, will run the concatenated output through 
- [uglify](https://github.com/mishoo/UglifyJS)
+                  [uglify](https://github.com/mishoo/UglifyJS)
  * `libraries`  : a module-filename mapping for absolute requires, e.g. `util` 
- which does not make sense in a browser context.
+                  which does not make sense in a browser context.
  * `copyright`  : a comment to be added to the top of the output file.
 
 Example
