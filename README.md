@@ -6,7 +6,7 @@ A simple dependency management and javascript concatenation library.
 Install
 -------
 
-  npm install ristretto
+    npm install ristretto
 
 Usage
 -----
