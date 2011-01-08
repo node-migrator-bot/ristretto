@@ -2,13 +2,12 @@ ristretto = require '../src/ristretto'
 
 task 'build', 'compile sample app', (options) ->
   ristretto.bundle
-    target    : 'output.js'
+    target    : 'build.js'
     main      : 'src/app.coffee'
     raw       : ['raw/globals.js']
     minify    : true
     libraries :
       util : 'libraries/util.js'
     copyright : """
-      Ristretto sample © Adrien Friggeri
-      MIT License
+      ©2011 Your Name-Here
     """

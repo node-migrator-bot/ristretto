@@ -1,0 +1,25 @@
+{
+  "name": "ristretto",
+  "description": "A simple dependency management and javascript concatenation library.",
+  "keywords":     ["javascript", "language", "coffeescript", "compiler"],
+  "version": "0.0.2",
+  "licenses": [{
+    "type": "MIT",
+  }],
+  "repository":{
+    "type":"git",
+    "url":"http://github.com/afriggeri/ristretto.git"
+  },
+  "author": "Adrien Friggeri (http://friggeri.net/)",
+  "main": "./lib/ristretto",
+  "directories": {
+    "lib": "lib"
+  },
+  "engines": {
+    "node": ">=0.3.0"
+  },
+  "dependencies": {
+    "coffee-script":"1.0.0",
+    "uglify-js":"0.0.1"
+  }
+}

@@ -1,0 +1,1 @@
+A dummy application to illustrate the use of `ristretto`.

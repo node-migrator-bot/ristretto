@@ -4,6 +4,10 @@ path      = require 'path'
 constants = require 'constants'
 
 class Ristretto
+  class @UnknownModule extends Error
+    constructor: (@req, @fileName) ->
+      @message = "Cannot find module `#{@req}` required in file `#{path.basename(@fileName)}`"
+    
   @extensions  :
     '.js'      : (fileName) -> fs.readFileSync fileName, 'utf8'
     '.coffee'  : (fileName) -> coffee.compile(fs.readFileSync fileName, 'utf8')
@@ -45,7 +49,7 @@ class Ristretto
       rank     : 0
     
     module.body = @load(fileName).replace /require\(('|")(.*?)\1\)/g, (_, _, req, pos, contents) =>
-      depName = try @resolve(req, path.dirname(fileName)) catch e then throw new Ristretto.Error req, fileName
+      depName = try @resolve(req, path.dirname(fileName)) catch e then throw new Ristretto.UnknownModule req, fileName
       
       dep = @add(@resolve(req, path.dirname(fileName)), req)
       dep.children.push module
@@ -71,20 +75,12 @@ class Ristretto
         })(_ristretto.require, _ristretto.modules["#{module.hash}"] = {exports:{}}, _ristretto.modules["#{module.hash}"].exports);
       """ for module in (module for fileName, module of @modules).sort((a,b) -> a.rank - b.rank)).join('\n')
     ].join('\n')
-    
-class Ristretto.Error extends Error
-  constructor: (@req, @fileName) ->
-    @message = "Unknown module `#{@req}` required in file `#{@fileName}`"
-  
+
 exports.bundle = (options) -> 
-  try
-    output = (new Ristretto options).bundle()
-  catch e
-    console.log e.message
-    process.exit 1
+  output = (new Ristretto options).bundle()
     
   if options.minify?
-    {uglify, parser} = require 'uglify'
+    {uglify, parser} = require 'uglify-js'
     ast = parser.parse output
     ast = uglify.ast_mangle ast
     ast = uglify.ast_squeeze ast
